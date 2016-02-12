@@ -10,9 +10,14 @@ class TddInPythonExample(unittest.TestCase):
 
 	def test_jenkins_connection(self):
 		jenkins = JenkinsConnection(self.JENKINS_TEST_SERVER, self.JENKINS_TEST_JOB)
-		self.assertEqual(jenkins.jenkins_server, self.JENKINS_TEST_SERVER)
-		self.assertEqual(jenkins.jenkins_job, self.JENKINS_TEST_JOB)
-		self.assertIsInstance(jenkins.jenkins_ref, Jenkins)
+		self.assertEqual(jenkins.jserver, self.JENKINS_TEST_SERVER)
+		self.assertEqual(jenkins.jjob_name, self.JENKINS_TEST_JOB)
+		self.assertIsInstance(jenkins.jref, Jenkins)
+
+	def test_get_latest_build_id(self):
+		jenkins = JenkinsConnection(self.JENKINS_TEST_SERVER, self.JENKINS_TEST_JOB)
+		self.assertEqual(jenkins.getLatestBuildId(), 50)
+
 
 	#def test_get_last_ten_builds(self):	
 	#	jenkins = JenkinsConnection(JENKINS_TEST_SERVER, JENKINS_TEST_JOB)
