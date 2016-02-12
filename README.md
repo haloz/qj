@@ -2,6 +2,7 @@
 Query Jenkins - Toolbox for fetching data from Jenkins builds
 
 Install:
+* pip install mock
 * pip install nose
 * pip install jenkinsapi
 
