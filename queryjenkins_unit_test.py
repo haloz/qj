@@ -8,15 +8,18 @@ class TddInPythonExample(unittest.TestCase):
 	JENKINS_TEST_SERVER = "http://builds.apache.org"
 	JENKINS_TEST_JOB = "Phoenix-4.4-HBase-1.0"
 
-	def test_jenkins_connection(self):
-		jenkins = JenkinsConnection(self.JENKINS_TEST_SERVER, self.JENKINS_TEST_JOB)
-		self.assertEqual(jenkins.jserver, self.JENKINS_TEST_SERVER)
-		self.assertEqual(jenkins.jjob_name, self.JENKINS_TEST_JOB)
-		self.assertIsInstance(jenkins.jref, Jenkins)
+
+	def setUp(self):
+		self.jenkins = JenkinsConnection(self.JENKINS_TEST_SERVER, self.JENKINS_TEST_JOB)
+
+	def test_jenkins_connection(self):		
+		self.assertEqual(self.jenkins.jserver, self.JENKINS_TEST_SERVER)
+		self.assertEqual(self.jenkins.jjob_name, self.JENKINS_TEST_JOB)
+		self.assertIsInstance(self.jenkins.jref, Jenkins)
 
 	def test_get_latest_build_id(self):
 		jenkins = JenkinsConnection(self.JENKINS_TEST_SERVER, self.JENKINS_TEST_JOB)
-		self.assertEqual(jenkins.getLatestBuildId(), 50)
+		self.assertEqual(self.jenkins.getLatestBuildId(), 50)
 
 
 	#def test_get_last_ten_builds(self):	
