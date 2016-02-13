@@ -1,12 +1,11 @@
+import jenkinsapi
+from jenkinsapi.jenkins import Jenkins
 
-def zeromethod():
-	return 0
+class QueryJenkins(object):
+	def connectToJenkins(self, server):
+		self.jref = Jenkins(server)	
+		return 1
 
-def getokvalue():
-	return "ok"
-
-def gettestvalue():
-	return "true"
-
-def connect():
-	return getokvalue() + '-' + gettestvalue()
+	def getListOfBuilds(self, jobname):
+		self.jjobref = self.jref[jobname]
+		return [0]
