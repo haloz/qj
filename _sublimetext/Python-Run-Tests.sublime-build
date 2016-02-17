@@ -1,0 +1,4 @@
+{
+	"shell_cmd": "py.test --capture=no -s && py.test --cov --capture=no -s",
+	"working_dir": "$file_path/.."
+}

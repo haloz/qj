@@ -1,0 +1,4 @@
+{
+	"build_on_save" : 1,
+	"filename_filter" : "\\.py$"
+}
