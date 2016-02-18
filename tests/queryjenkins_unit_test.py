@@ -8,6 +8,6 @@ class QueryJenkinsTest(unittest.TestCase):
     def setUp(self):
         self.qj = QueryJenkins()
 
-    def testConnectToJenkins(self):
-        pass
-        # assert self.qj.connectToJenkins("http://127.0.0.1") == 1
+    @mock.patch.object(Jenkins, '_poll')
+    def testConnectToJenkins(self, _poll):
+        assert self.qj.connectToJenkins("http://127.0.0.1") == 1
