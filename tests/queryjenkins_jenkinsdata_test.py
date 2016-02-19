@@ -5,9 +5,6 @@ JENKINS_TEST_JOB = "Phoenix-4.4-HBase-1.0"
 JENKINS_TEST_SERVER = "http://builds.apache.org"
 
 
-
-
-
 def setUp(self):
     pass
 
@@ -27,7 +24,7 @@ def test_jenkins_connection():
 def test_get_builds():
     qjinstance = QueryJenkins()
     qjinstance.connectToJenkins(JENKINS_TEST_SERVER)
-    buildlist = qjinstance.getBuilds(JENKINS_TEST_JOB)
+    buildlist = qjinstance.getBuilds(JENKINS_TEST_JOB, 10)
     assert len(buildlist) == 10
 
 
@@ -35,9 +32,9 @@ def test_get_builds():
 def test_get_only_green_builds():
     qjinstance = QueryJenkins()
     qjinstance.connectToJenkins(JENKINS_TEST_SERVER)
-    buildlist = qjinstance.getBuilds(JENKINS_TEST_JOB)
+    buildlist = qjinstance.getBuilds(JENKINS_TEST_JOB, 10)
     greenbuilds = qjinstance.getGreenBuilds(buildlist)
     for b in greenbuilds:
-        assert b.is_good
+        assert b.is_good()
 
 
