@@ -10,6 +10,7 @@ setup(
         'pytest',
         'pytest-bdd',
         'pytest-cov',
-        'jenkinsapi'
+        'jenkinsapi',
+        'XlsxWriter'
     ]
 )
