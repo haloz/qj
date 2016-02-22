@@ -25,3 +25,4 @@ class QueryJenkins(object):
                 green_builds.append(b)
         return green_builds
 
+
