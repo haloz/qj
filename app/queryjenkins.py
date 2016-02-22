@@ -10,27 +10,18 @@ class QueryJenkins(object):
 
     DATE_FORMAT = "%Y.%m.%d"
 
-    def connectToJenkins(self, server):
-        self._jenkins_libary = Jenkins(server)
-        return 1
-
-    def getBuilds(self, jobname, amount):
-        self._jenkins_job = self._jenkins_libary[jobname]
-        lastgoodbuild = self._jenkins_job.get_last_good_build()
+    def getBuilds(self, server, jobname, amount):
+        jenkins_libary = Jenkins(server)
+        jenkins_job = jenkins_libary.get_job(jobname)
+        lastgoodbuild = jenkins_job.get_last_good_build()
         lastbuildid = lastgoodbuild.get_number()
         builds = []
         for build_id in range(lastbuildid, lastbuildid - amount, -1):
-            current_build = self._jenkins_job.get_build(build_id)
-            builds.append(current_build)
+            current_build = jenkins_job.get_build(build_id)
+            if current_build.is_good():
+                builds.append(current_build)
 
         return builds
-
-    def getGreenBuilds(self, builds):
-        green_builds = []
-        for b in builds:
-            if b.is_good():
-                green_builds.append(b)
-        return green_builds
 
     def getTicketNumbers(self, build, ticket_regex):
         items = build.get_changeset_items()
@@ -39,6 +30,7 @@ class QueryJenkins(object):
 
         for entry in items:
             message = entry["msg"]
+            print("-- found message: ", message)
 
             noissue = re.compile(r"#noissue")
             if not noissue.search(message):

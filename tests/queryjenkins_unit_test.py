@@ -27,7 +27,7 @@ class RegexTest(unittest.TestCase):
             assert match.group(1) is not None
 
         web_regex = re.compile(r"([A-Z]+-\d+).+?\[W[eE][bB]\]")
-        for i, exp in enumerate(expressions):            
+        for i, exp in enumerate(expressions):
             match = web_regex.search(exp)
             if i in [0, 1, 2, 3, 4, 5, 6]:
                 assert match is None
@@ -49,9 +49,22 @@ class QueryJenkinsTest(unittest.TestCase):
     def setUp(self):
         self.qj = QueryJenkins()
 
-    @mock.patch.object(Jenkins, '_poll')
-    def testConnectToJenkins(self, _poll):
-        assert self.qj.connectToJenkins("http://127.0.0.1") == 1
+    # @mock.patch.object("Jenkins", "get_job")
+    # def testGetBuilds(self, _getjob):
+    #     _getjob.return_value = {
+    #         'jobs': [
+    #             {'name': 'job_one',
+    #              'url': 'http://localhost:8080/job_one',
+    #              'color': 'blue'},
+    #             {'name': 'job_two',
+    #              'url': 'http://localhost:8080/job_two',
+    #              'color': 'blue'},
+    #         ]
+    #     }
+    #     builds = self.qj.getBuilds(
+    #         self.JENKINS_TEST_SERVER, self.JENKINS_TEST_JOB, 3)
+    #     # mock_jenkins.__init__.assert_called_with(self.JENKINS_TEST_SERVER)
+    #     mock_jenkins.get_job.assert_called_with(self.JENKINS_TEST_JOB)
 
     def testMapBuildEntriesToPerDayValues(self):
         dayvalues = self.qj.mapBuildEntriesToPerDayValues(self.TEST_VALUES)
