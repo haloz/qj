@@ -1,5 +1,4 @@
 from app.queryjenkins import QueryJenkins
-import xlsxwriter
 
 
 JENKINS_SERVER = "http://127.0.0.1"
@@ -24,14 +23,6 @@ def _findPHPTickets(build, alltickets, webtickets):
     return list(set(alltickets) - set(webtickets))
 
 
-
-
-
-workbook = xlsxwriter.Workbook("buildtickets.xlsx")
-worksheet = workbook.add_worksheet()
-xls_number_format = workbook.add_format({'num_format': '0'})
-xls_date_format = workbook.add_format({'num_format': 'dd.mm.yyyy'})
-
 qj = QueryJenkins()
 qj.connectToJenkins(JENKINS_SERVER)
 buildlist = qj.getBuilds(JENKINS_JOB, NUMBER_OF_PAST_BUILDS)
@@ -51,13 +42,6 @@ for b in greenbuilds:
 
 
 dayvalues = qj.mapBuildEntriesToPerDayValues(entries)
+qj.exportAsExcelFile("buildtickets.xlsx", dayvalues)
 
-line_counter = 1
-for t in sorted(dayvalues):
-    worksheet.write(
-        'A'+str(line_counter), t, xls_date_format)
-    worksheet.write_number(
-        'B'+str(line_counter), dayvalues[t], xls_number_format)
-    line_counter += 1
 
-workbook.close()

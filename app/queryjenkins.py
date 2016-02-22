@@ -2,6 +2,7 @@ import re
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
+import xlsxwriter
 from jenkinsapi.jenkins import Jenkins
 
 
@@ -72,4 +73,19 @@ class QueryJenkins(object):
             current_entry += delta
 
         return dayvalues
+
+    def exportAsExcelFile(self, filename, values):
+        workbook = xlsxwriter.Workbook(filename)
+        worksheet = workbook.add_worksheet()
+        xls_number_format = workbook.add_format({'num_format': '0'})
+        xls_date_format = workbook.add_format({'num_format': 'yyyy.mm.dd'})
+        line_counter = 1
+        for t in sorted(values):
+            worksheet.write(
+                'A'+str(line_counter), t, xls_date_format)
+            worksheet.write_number(
+                'B'+str(line_counter), values[t], xls_number_format)
+            line_counter += 1
+        print("wrote file:", filename)
+        workbook.close()
 
