@@ -1,46 +1,56 @@
+import sys
+import argparse
 from app.queryjenkins import QueryJenkins
 
 
-# JENKINS_SERVER = "http://127.0.0.1"
-# JENKINS_JOB = "testjob"
-JENKINS_SERVER = "http://builds.apache.org"
-JENKINS_JOB = "Phoenix-4.4-HBase-1.0"
-# use 250 to start from 2015.09.16
-NUMBER_OF_PAST_BUILDS = 1
+NUMBER_OF_PAST_BUILDS = 5
 DATE_FORMAT = "%Y.%m.%d"
 
 
-# def _findWebTickets(qj, build):
-#     web_ticket_numbers = qj.getTicketNumbers(
-#         build, r"([A-Z]+-\d+).+?\[W[eE][bB]\]")
-#     return web_ticket_numbers
+def _parseArguments(argv):
+    parser = argparse.ArgumentParser(
+        description="QueryJenkins: a Jenkins build statistics tool.")
+    parser.add_argument(
+        "-s", dest="server", required=True,
+        help="jenkins server url incl. protocol")
+    parser.add_argument(
+        "-j", dest="jobname", required=True,
+        help="jenkins job name")
+    parser.add_argument(
+        "-d", dest="startdate", required=False,
+        help="start date in format \"yyyy.mm.dd\"")
+    parser.add_argument(
+        "-u", dest="username", nargs="?", default=None, help="username")
+    parser.add_argument(
+        "-p", dest="password", nargs="?", default=None, help="password")
+    return vars(parser.parse_args())
 
 
-# def _findAllTickets(qj, build):
-#     all_ticket_numbers = qj.getTicketNumbers(build, r"([A-Z]+-\d+)")
-#     return all_ticket_numbers
+def main(argv):
+    argvdict = _parseArguments(argv)
+    qj = QueryJenkins()
+    builds = qj.getBuilds(
+        argvdict["server"],
+        argvdict["username"],
+        argvdict["password"],
+        argvdict["jobname"],
+        NUMBER_OF_PAST_BUILDS)
 
+    entries = {}
 
-# def _findPHPTickets(build, alltickets, webtickets):
-#     return list(set(alltickets) - set(webtickets))
+    for b in builds:
+        print("main loop build: ", b.get_number())
+        time = b.get_timestamp()
+        tickets = len(qj.getTicketNumbers(b, r"([A-Z]+-\d+)"))
+        time_formatted = str(time.strftime(DATE_FORMAT))
+        if time_formatted in entries:
+            entries[time_formatted] = entries[time_formatted] + tickets
+        else:
+            entries[time_formatted] = tickets
 
+    per_day_values = qj.mapBuildEntriesToPerDayValues(entries)
+    qj.exportAsExcelFile("buildtickets.xlsx", per_day_values)
 
-qj = QueryJenkins()
-builds = qj.getBuilds(JENKINS_SERVER, JENKINS_JOB, NUMBER_OF_PAST_BUILDS)
-
-entries = {}
-
-for b in builds:
-    print("main loop build: ", b.get_number())
-    time = b.get_timestamp()
-    tickets = len(qj.getTicketNumbers(b, r"([A-Z]+-\d+)"))
-    time_formatted = str(time.strftime(DATE_FORMAT))
-    if time_formatted in entries:
-        entries[time_formatted] = entries[time_formatted] + tickets
-    else:
-        entries[time_formatted] = tickets
-
-
-per_day_values = qj.mapBuildEntriesToPerDayValues(entries)
-qj.exportAsExcelFile("buildtickets.xlsx", per_day_values)
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
 

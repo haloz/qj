@@ -10,8 +10,8 @@ class QueryJenkins(object):
 
     DATE_FORMAT = "%Y.%m.%d"
 
-    def getBuilds(self, server, jobname, amount):
-        jenkins_libary = Jenkins(server)
+    def getBuilds(self, server, username, password, jobname, amount):
+        jenkins_libary = Jenkins(server, username, password)
         jenkins_job = jenkins_libary.get_job(jobname)
         lastgoodbuild = jenkins_job.get_last_good_build()
         lastbuildid = lastgoodbuild.get_number()

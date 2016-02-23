@@ -62,7 +62,7 @@ class QueryJenkinsTest(unittest.TestCase):
     #         ]
     #     }
     #     builds = self.qj.getBuilds(
-    #         self.JENKINS_TEST_SERVER, self.JENKINS_TEST_JOB, 3)
+    #         self.JENKINS_TEST_SERVER, None, None, self.JENKINS_TEST_JOB, 3)
     #     # mock_jenkins.__init__.assert_called_with(self.JENKINS_TEST_SERVER)
     #     mock_jenkins.get_job.assert_called_with(self.JENKINS_TEST_JOB)
 
