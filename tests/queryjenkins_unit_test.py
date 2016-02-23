@@ -19,17 +19,20 @@ class RegexTest(unittest.TestCase):
             "LV-2731 [News] Fix using combination of both IDs",
             "LV-2796 [Tests] Fixed multiple instantiation of user object",
             "LV-2779 [Misc] Remove config from ai",
-            "LV-2522 [Web][Match]Add prevenDefault to match vote to avoid constant"
+            "LV-2522 [Web][Match]Add prevenDefault to match vote to avoid constant",
+            "Revert \"LV-2734 increase api_version_minimum to 1.13\"",
+            "removed old benchmark logic to cleanup the code LV-2741"
         ]
         alltickets_regex = re.compile(r"([A-Z]+-\d+)")
         for exp in expressions:
             match = alltickets_regex.search(exp)
+
             assert match.group(1) is not None
 
         web_regex = re.compile(r"([A-Z]+-\d+).+?\[W[eE][bB]\]")
         for i, exp in enumerate(expressions):
             match = web_regex.search(exp)
-            if i in [0, 1, 2, 3, 4, 5, 6]:
+            if i in [0, 1, 2, 3, 4, 5, 6, 8, 9]:
                 assert match is None
             else:
                 assert match.group(1) is not None
