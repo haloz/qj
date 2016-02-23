@@ -38,7 +38,7 @@ class RegexTest(unittest.TestCase):
 class QueryJenkinsTest(unittest.TestCase):
 
     JENKINS_TEST_JOB = "testjob"
-    JENKINS_TEST_SERVER = "http://127.1.1.1"
+    JENKINS_TEST_SERVER = "http://127.0.0.1"
     DATE_FORMAT = "%Y.%m.%d"
     TEST_VALUES = {
         "2016.02.08": 12,
