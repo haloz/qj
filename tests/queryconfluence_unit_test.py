@@ -52,7 +52,11 @@ class QueryConfluenceTestCase(unittest.TestCase):
     def testReplacePageContent(self, mock_post):
         url = "http://localhost:8080/confluence/rest/api/content/"
         data = "<h1>Test</h1>"
-        self.qc.replacePageContent(url, 11, data)
+        with mock.patch(
+            "app.queryconfluence.requests.get",
+            new=MockOkResponse
+        ):
+            self.qc.replacePageContent(url, 11, data)
         mock_post.assert_called_once_with(
             "http://localhost:8080/confluence/rest/api/content/11",
             self.qc.packContent(11, data),

@@ -26,7 +26,7 @@ class QueryConfluence(object):
             return False
 
     def replacePageContent(self, server_url, page_id, content):
-        if self.checkPageExists:
+        if self.checkPageExists(server_url, page_id):
             requests.post(
                 urljoin(server_url, str(page_id)),
                 self.packContent(page_id, content),
