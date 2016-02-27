@@ -10,7 +10,7 @@ from app.queryjenkins import QueryJenkins
 
 
 class RegexTest(unittest.TestCase):
-    def testTicketRegex(self):
+    def test_ticket_regex(self):
         expressions = [
             "LV-246 [Logging] Adding locations to user properties",
             "removed the exception when event type is unknown LV-2470",
@@ -69,8 +69,8 @@ class QueryJenkinsTest(unittest.TestCase):
     #     # mock_jenkins.__init__.assert_called_with(self.JENKINS_TEST_SERVER)
     #     mock_jenkins.get_job.assert_called_with(self.JENKINS_TEST_JOB)
 
-    def testMapBuildEntriesToPerDayValues(self):
-        dayvalues = self.qj.mapBuildEntriesToPerDayValues(self.TEST_VALUES)
+    def test_map_build_entries_to_days(self):
+        dayvalues = self.qj.map_build_entries_to_days(self.TEST_VALUES)
         sorted_dayvalues = sorted(dayvalues)
         assert "2016.02.05" == sorted_dayvalues[0]
         assert "2016.02.06" == sorted_dayvalues[1]
@@ -78,9 +78,9 @@ class QueryJenkinsTest(unittest.TestCase):
         today_as_string = date.strftime(today, self.DATE_FORMAT)
         assert today_as_string == sorted_dayvalues[-1]
 
-    def testExportAsExcelFile(self):
+    def test_export_as_excel_file(self):
         testfile = os.path.join(tempfile.gettempdir(), "test.xlsx")
-        self.qj.exportAsExcelFile(testfile, self.TEST_VALUES)
+        self.qj.export_as_excel_file(testfile, self.TEST_VALUES)
         self.assertTrue(os.path.isfile(testfile), "Successfully created xlsx file")
         os.remove(testfile)
         # assume called xlsxwriter.Workbook("test.xlsx")
