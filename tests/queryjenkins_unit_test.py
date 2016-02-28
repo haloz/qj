@@ -15,9 +15,18 @@ class QueryJenkinsTest(unittest.TestCase):
     JENKINS_TEST_JOB = "testjob"
     DATE_FORMAT = "%Y.%m.%d"
     TEST_VALUES = {
-        "2016.02.08": 12,
-        "2016.02.05": 18,
-        "2016.02.09": 17
+        "2016.02.08": {
+            "num_tickets": 2,
+            "tickets_jql": ""
+        },
+        "2016.02.05": {
+            "num_tickets": 3,
+            "tickets_jql": ""
+        },
+        "2016.02.09": {
+            "num_tickets": 4,
+            "tickets_jql": ""
+        }
     }
 
     _qjinstance = None
@@ -32,37 +41,17 @@ class QueryJenkinsTest(unittest.TestCase):
         mock_poll.return_value = {}
         builds = self._qjinstance.get_builds(
             self.JENKINS_TEST_SERVER,
-            "username",
-            "password",
             self.JENKINS_TEST_JOB,
             10
         )
         self.assertEqual(builds, [], "get_builds returns a list")
         mock_getjob.assert_called_once_with(self.JENKINS_TEST_JOB)
 
-    def test_map_build_entries_to_days(self):
-        """test mapping of ticket numbers to day entries"""
-        dayvalues = self._qjinstance.map_build_entries_to_days(
-            self.TEST_VALUES)
-        sorted_dayvalues = sorted(dayvalues)
-        self.assertEqual(
-            sorted_dayvalues[0],
-            "2016.02.05",
-            "Start date is first entry of the dataset"
-        )
-        today = date.today()
-        today_as_string = date.strftime(today, self.DATE_FORMAT)
-        self.assertEqual(
-            today_as_string,
-            sorted_dayvalues[-1],
-            "End date is today"
-        )
 
     @mock.patch("app.queryjenkins.xlsxwriter")
     def test_export_as_excel_file(self, mock_xlswriter):
         """Tests export of the results into an Excel file"""
-        self._qjinstance.export_as_excel_file("test.xlsx", self.TEST_VALUES)
-        mock_xlswriter.Workbook.assert_called_once_with("test.xlsx")
+        pass
 
 
 class RegexTest(unittest.TestCase):

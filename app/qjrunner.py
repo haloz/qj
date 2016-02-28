@@ -12,6 +12,7 @@ of the Jenkins builds on that data.
 import sys
 import argparse
 from app.queryjenkins import QueryJenkins
+from app.dayentry import AllJenkinsDayEntries, JenkinsDayEntry
 
 
 NUMBER_OF_PAST_BUILDS = 5
@@ -31,10 +32,6 @@ def _parse_arguments():
     parser.add_argument(
         "-d", dest="startdate", required=False,
         help="start date in format \"yyyy.mm.dd\"")
-    parser.add_argument(
-        "-u", dest="username", nargs="?", default=None, help="username")
-    parser.add_argument(
-        "-p", dest="password", nargs="?", default=None, help="password")
     return vars(parser.parse_args())
 
 
@@ -42,26 +39,29 @@ def main():
     """Orchestrate our toolbox to run the Jenkins analysis"""
     argvdict = _parse_arguments()
     qjinstance = QueryJenkins()
-    builds = qjinstance.get_builds(
+
+    buildlist = qjinstance.get_builds(
         argvdict["server"],
-        argvdict["username"],
-        argvdict["password"],
         argvdict["jobname"],
         NUMBER_OF_PAST_BUILDS)
 
-    entries = {}
+    allentries = AllJenkinsDayEntries()
 
-    for build in builds:
-        print("main loop build: ", build.get_number())
-        time = build.get_timestamp()
-        tickets = len(qjinstance.get_ticket_tumbers(build, r"([A-Z]+-\d+)"))
-        time_formatted = str(time.strftime(DATE_FORMAT))
-        if time_formatted in entries:
-            entries[time_formatted] = entries[time_formatted] + tickets
-        else:
-            entries[time_formatted] = tickets
+    for build in buildlist:
+        dayentry = JenkinsDayEntry()
+        dayentry.date = build.get_timestamp().date()
+        dayentry.tickets = qjinstance.get_ticket_tumbers(
+            build,
+            r"([A-Z]+-\d+)"
+        )
+        allentries.add(dayentry)
 
-    per_day_values = qjinstance.map_build_entries_to_days(entries)
+    per_day_values = allentries.entries_with_empty_days()
+    for e in per_day_values:
+        print("entry")
+        print("**date:", e.date_as_string())
+        print("**jql:", e.tickets_as_jql())
+
     qjinstance.export_as_excel_file("buildtickets.xlsx", per_day_values)
 
 if __name__ == "__main__":
