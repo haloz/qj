@@ -1,12 +1,8 @@
 """This module handles access to Jenkins"""
 
 import re
-from datetime import date
-from datetime import datetime
-from datetime import timedelta
 import xlsxwriter
 from jenkinsapi.jenkins import Jenkins
-from app.dayentry import AllJenkinsDayEntries, JenkinsDayEntry
 
 
 class QueryJenkins():
@@ -69,8 +65,8 @@ class QueryJenkins():
 
         for dayentry in values:
             worksheet.write(
-                'A'+str(line_counter), 
-                dayentry.date_as_string(), 
+                'A'+str(line_counter),
+                dayentry.date_as_string(),
                 xls_date_format)
             worksheet.write_number(
                 'B'+str(line_counter),

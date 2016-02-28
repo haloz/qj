@@ -57,11 +57,6 @@ def main():
         allentries.add(dayentry)
 
     per_day_values = allentries.entries_with_empty_days()
-    for e in per_day_values:
-        print("entry")
-        print("**date:", e.date_as_string())
-        print("**jql:", e.tickets_as_jql())
-
     qjinstance.export_as_excel_file("buildtickets.xlsx", per_day_values)
 
 if __name__ == "__main__":

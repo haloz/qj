@@ -3,7 +3,6 @@
 import unittest
 from unittest import mock
 import re
-from datetime import date
 from jenkinsapi.jenkins import Jenkins
 from app.queryjenkins import QueryJenkins
 
@@ -47,11 +46,11 @@ class QueryJenkinsTest(unittest.TestCase):
         self.assertEqual(builds, [], "get_builds returns a list")
         mock_getjob.assert_called_once_with(self.JENKINS_TEST_JOB)
 
-
     @mock.patch("app.queryjenkins.xlsxwriter")
     def test_export_as_excel_file(self, mock_xlswriter):
         """Tests export of the results into an Excel file"""
-        pass
+        self._qjinstance.export_as_excel_file("test.xlsx", [])
+        mock_xlswriter.Workbook.assert_called_once_with("test.xlsx")
 
 
 class RegexTest(unittest.TestCase):
