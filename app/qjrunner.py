@@ -50,10 +50,7 @@ def main():
     for build in buildlist:
         dayentry = JenkinsDayEntry()
         dayentry.date = build.get_timestamp().date()
-        dayentry.tickets = qjinstance.get_ticket_tumbers(
-            build,
-            r"([A-Z]+-\d+)"
-        )
+        dayentry.tickets = qjinstance.get_ticket_tumbers(build)
         allentries.add(dayentry)
 
     per_day_values = allentries.entries_with_empty_days()

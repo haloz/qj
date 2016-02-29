@@ -9,6 +9,7 @@ class QueryJenkins():
     """Gathers Jenkins job builds and the processed tickets"""
 
     DATE_FORMAT = "%Y.%m.%d"
+    TICKET_REGEX = r"([A-Z]+-\d+)"
 
     @classmethod
     def get_builds(cls, server, jobname, amount):
@@ -27,11 +28,11 @@ class QueryJenkins():
         return builds
 
     @classmethod
-    def get_ticket_tumbers(cls, build, ticket_regex):
+    def get_ticket_tumbers(cls, build):
         """Extract ticket ids from the changeset of a Jenkins build"""
         items = build.get_changeset_items()
         ticket_numbers = []
-        regex = re.compile(ticket_regex)
+        regex = re.compile(cls.TICKET_REGEX)
 
         for entry in items:
             message = entry["msg"]

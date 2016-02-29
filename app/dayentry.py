@@ -30,6 +30,7 @@ class JenkinsDayEntry(object):
 
 class AllJenkinsDayEntries(object):
     """All Jenkins data day entries"""
+    entries = []
 
     def __init__(self):
         self.entries = []
@@ -41,15 +42,15 @@ class AllJenkinsDayEntries(object):
                 return item
         return False
 
-    def add(self, item):
+    def add(self, newitem):
         """Add a new JenkinsDayEntry to the entries, but only if for the given
            day we don't already have one. If there's already one then just add
            the tickets from the new entry to the existing ones"""
-        if item.date in self.alldays():
-            existingitem = self.get(item.date)
+        if newitem.date in self.alldays():
+            existingitem = self.get(newitem.date)
             self.entries.remove(existingitem)
-            item.tickets += existingitem.tickets
-        self.entries.append(item)
+            newitem.tickets += existingitem.tickets
+        self.entries.append(newitem)
 
     def alldays(self):
         """All days from the stored JenkinsDayEntrys"""

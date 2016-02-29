@@ -55,30 +55,22 @@ class QueryJenkinsTest(unittest.TestCase):
 
 class RegexTest(unittest.TestCase):
     """Test class for checking regular expressions matches"""
+
     def test_ticket_regex(self):
         """Verify parsing of ticket ids from commit messages"""
         expressions = [
-            "LV-246 [Logging] Adding locations to user properties",
-            "removed the exception when event type is unknown LV-2470",
-            "Etc etc PHPBAC-342 Etc Etc",
-            "LV-2731 [News] Changed from using the app ID to the advert ID for",
-            "LV-2731 [News] Fix using combination of both IDs",
-            "LV-2796 [Tests] Fixed multiple instantiation of user object",
-            "LV-2779 [Misc] Remove config from ai",
-            "LV-2522 [Web][Match]Add prevenDefault to match vote to avoid constant",
-            "Revert \"LV-2734 increase api_version_minimum to 1.13\"",
-            "removed old benchmark logic to cleanup the code LV-2741"
+            "XX-123 [test] test test test",
+            "test test XY-1234",
+            "Etc etc XYTABC-123123 Etc Etc",
+            "AA-1111 [category] test test test test test test test test test",
+            "AA-1111 [CATEGORY] test ",
+            "AA-1111 [test] Test test",
+            "AA-1111 [Test][Test2]test test test test test test test",
+            "Test \"AA-1111 test test test 1.1.1 test\"",
+            "test test test test AA-1111 test"
         ]
-        alltickets_regex = re.compile(r"([A-Z]+-\d+)")
+        alltickets_regex = re.compile(QueryJenkins.TICKET_REGEX)
         for exp in expressions:
             match = alltickets_regex.search(exp)
 
             assert match.group(1) is not None
-
-        web_regex = re.compile(r"([A-Z]+-\d+).+?\[W[eE][bB]\]")
-        for i, exp in enumerate(expressions):
-            match = web_regex.search(exp)
-            if i in [0, 1, 2, 3, 4, 5, 6, 8, 9]:
-                assert match is None
-            else:
-                assert match.group(1) is not None
