@@ -11,6 +11,8 @@ setup(
         'pytest-bdd',
         'pytest-cov',
         'jenkinsapi',
-        'XlsxWriter'
+        'XlsxWriter',
+        'jira',
+        'pylint'
     ]
 )
