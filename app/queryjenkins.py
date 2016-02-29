@@ -1,23 +1,21 @@
 """This module handles access to Jenkins"""
 
 import re
-from datetime import date
-from datetime import datetime
-from datetime import timedelta
 import xlsxwriter
 from jenkinsapi.jenkins import Jenkins
 
 
-class QueryJenkins(object):
+class QueryJenkins():
     """Gathers Jenkins job builds and the processed tickets"""
 
     DATE_FORMAT = "%Y.%m.%d"
+    TICKET_REGEX = r"([A-Z]+-\d+)"
 
     @classmethod
-    def get_builds(cls, server, username, password, jobname, amount):
+    def get_builds(cls, server, jobname, amount):
         """Given a Jenkins server URL, a job name and the amount of builds
            returns a list of Jenkins builds"""
-        jenkins_libary = Jenkins(server, username, password)
+        jenkins_libary = Jenkins(server)
         jenkins_job = jenkins_libary.get_job(jobname)
         lastgoodbuild = jenkins_job.get_last_good_build()
         lastbuildid = lastgoodbuild.get_number()
@@ -30,11 +28,11 @@ class QueryJenkins(object):
         return builds
 
     @classmethod
-    def get_ticket_tumbers(cls, build, ticket_regex):
+    def get_ticket_tumbers(cls, build):
         """Extract ticket ids from the changeset of a Jenkins build"""
         items = build.get_changeset_items()
         ticket_numbers = []
-        regex = re.compile(ticket_regex)
+        regex = re.compile(cls.TICKET_REGEX)
 
         for entry in items:
             message = entry["msg"]
@@ -58,30 +56,6 @@ class QueryJenkins(object):
         return ticket_numbers
 
     @classmethod
-    def map_build_entries_to_days(cls, buildentries):
-        """Output a dictionary with per-day entries and the
-           amount of tickets on that day"""
-        lowest_time = sorted(buildentries.keys())[0]
-
-        history = datetime.strptime(lowest_time, cls.DATE_FORMAT).date()
-        today = date.today()
-        delta = timedelta(days=1)
-
-        dayvalues = {}
-        current_entry = history
-        while current_entry <= today:
-            current_as_string = date.strftime(current_entry, cls.DATE_FORMAT)
-
-            if current_as_string in buildentries:
-                dayvalues[current_as_string] = buildentries[current_as_string]
-            else:
-                dayvalues[current_as_string] = 0
-
-            current_entry += delta
-
-        return dayvalues
-
-    @classmethod
     def export_as_excel_file(cls, filename, values):
         """Output day-to-tickets dictionary into a Excel file"""
         workbook = xlsxwriter.Workbook(filename)
@@ -89,11 +63,19 @@ class QueryJenkins(object):
         xls_number_format = workbook.add_format({'num_format': '0'})
         xls_date_format = workbook.add_format({'num_format': 'yyyy.mm.dd'})
         line_counter = 1
-        for entry in sorted(values):
+
+        for dayentry in values:
             worksheet.write(
-                'A'+str(line_counter), entry, xls_date_format)
+                'A'+str(line_counter),
+                dayentry.date_as_string(),
+                xls_date_format)
             worksheet.write_number(
-                'B'+str(line_counter), values[entry], xls_number_format)
+                'B'+str(line_counter),
+                dayentry.num_tickets(),
+                xls_number_format)
+            worksheet.write(
+                'C'+str(line_counter),
+                dayentry.tickets_as_jql())
             line_counter += 1
         print("wrote file:", filename)
         workbook.close()
